@@ -9,6 +9,8 @@
 <body>
   <div class="container">
     <h3>Socket.io Chat Example</h3>
+    <button id="btn-join" class="btn btn-primary">Join</button>
+    <button id="btn-notice" class="btn btn-primary">NOTICE</button>
     <form class="form-inline">
       <div class="form-group">
         <label for="msgForm">Message: </label>
@@ -25,12 +27,7 @@
     // socket.io 서버에 접속한다
     var socket = io('/chat');
 
-    // 서버로 자신의 정보를 전송한다.
-    socket.emit("login", {
-      // name: "ungmo2",
-      name: makeRandomName(),
-      userid: "ungmo2@gmail.com"
-    });
+    //login('public');
 
     // 서버로부터의 메시지가 수신되면
     socket.on("login", function(data) {
@@ -40,6 +37,10 @@
     // 서버로부터의 메시지가 수신되면
     socket.on("chat", function(data) {
       $("#chatLogs").append("<div><strong>" + data.from.name + "</strong>: " + data.msg  + "</div>");
+    });
+
+    socket.on("notice", function(data) {
+      $("#chatLogs").append(data);
     });
 
     // 서버로부터의 내 메시지가 수신되면
@@ -57,6 +58,14 @@
       $msgForm.val("");
     });
 
+    $('#btn-join').click(()=>{
+      login("public");
+    })
+
+    $('#btn-notice').click(()=>{
+      socket.emit("notice");
+    })
+
     function makeRandomName(){
       var name = "";
       var possible = "abcdefghijklmnopqrstuvwxyz";
@@ -64,6 +73,15 @@
         name += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       return name;
+    }
+    function login(room) {
+    // 서버로 자신의 정보를 전송한다.
+      socket.emit("login", {
+        // name: "ungmo2",
+        name: makeRandomName(),
+        userid: "ungmo2@gmail.com",
+        room
+      });
     }
   });
   </script>
