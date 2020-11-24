@@ -22,9 +22,14 @@ app.get('/', function(req, res, next) {
     //console.log(req);
     var page = '/messenger';
     var uri = req.protocol + '://' + req.get('host') + page;
-    var msg = 'If you want to test the messenger, go to this link <a href=page>uri</a><br><br>port : ' + process.env.PORT;
+    var msg = 'If you want to test the messenger, go to this link <a href=page>uri</a>';
     msg = msg.replace('page', page);
     msg = msg.replace('uri', uri);
+
+    //console.log(server.address().address);
+    msg += '<br><br>ip : ' + server.address().address;
+    msg += '<br>port : ' + process.env.PORT;
+    
     res.send(msg);
 });
 
