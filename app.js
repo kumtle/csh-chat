@@ -26,7 +26,11 @@ app.get('/', function(req, res, next) {
     msg = msg.replace('page', page);
     msg = msg.replace('uri', uri);
 
+    console.log(req.connection.localAddress);
+    console.log(req.connection.remoteAddress);
     //console.log(server.address().address);
+    msg += '<br><br>localAddress : ' + req.connection.localAddress;
+    msg += '<br><br>remoteAddress : ' + req.connection.remoteAddress;
     msg += '<br><br>ip : ' + server.address().address;
     msg += '<br>port : ' + process.env.PORT;
     
