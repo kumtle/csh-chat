@@ -39,7 +39,7 @@ app.get('/', function(req, res, next) {
   var msg = 'If you want to test the messenger, go  to this link <a href=page>uri</a>';
   msg = msg.replace('page', page);
   msg = msg.replace('uri', uri);
-  msg = msg.local
+  
   console.log(req.connection.localAddress);
   console.log(req.connection.remoteAddress);
   //console.log(server.address().address);
