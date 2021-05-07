@@ -11,13 +11,23 @@
     <h3>Socket.io Chat Example</h3>
     <button id="btn-join" class="btn btn-primary">Join</button>
     <button id="btn-notice" class="btn btn-primary">NOTICE</button>
-    <form class="form-inline">
+
+    <form class="form-channel">
+      <div class="form-group">
+        <label for="channel-input">방 이름: </label>
+        <input type="text" class="form-control" id="channel-input">
+      </div>
+      <button type="channel-button" class="btn btn-primary">입장</button>
+    </form>
+
+    <form class="form-msg">
       <div class="form-group">
         <label for="msgForm">Message: </label>
         <input type="text" class="form-control" id="msgForm">
       </div>
       <button type="submit" class="btn btn-primary">Send</button>
     </form>
+
     <div id="chatLogs"></div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -27,11 +37,18 @@
     // socket.io 서버에 접속한다
     var socket = io('/chat');
 
+    var isJoined = false;
+
     //login('public');
 
     // 서버로부터의 메시지가 수신되면
     socket.on("login", function(data) {
       $("#chatLogs").append("<div><strong>" + data + "</strong> has joined</div>");
+    });
+
+    // 서버로부터의 메시지가 수신되면
+    socket.on("leaveRoom", function(data) {
+      $("#chatLogs").append("<div><strong>" + data + "</strong> has left</div>");
     });
 
     // 서버로부터의 메시지가 수신되면
@@ -51,15 +68,27 @@
     // Send 버튼이 클릭되면
     $("form").submit(function(e) {
       e.preventDefault();
-      var $msgForm = $("#msgForm");
+      if (e.currentTarget.className === 'form-msg') {
+        var $msgForm = $("#msgForm");
 
-      // 서버로 메시지를 전송한다.
-      socket.emit("chat", { msg: $msgForm.val() });
-      $msgForm.val("");
+        console.log(socket);
+        // 서버로 메시지를 전송한다.
+        socket.emit("chat", { msg: $msgForm.val() });
+        $msgForm.val("");
+      }
+      else if (e.currentTarget.className === 'form-channel') {
+        var channel = $('#channel-input').val();
+        login(channel);
+      }
     });
 
     $('#btn-join').click(()=>{
-      login("public");
+      socket.emit('login_user', {}, (data) => {
+        if (data.result === 'complete') {
+            console.log(data.data);
+        } 
+      })
+      //login("public");
     })
 
     $('#btn-notice').click(()=>{
